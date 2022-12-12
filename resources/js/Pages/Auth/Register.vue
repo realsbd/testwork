@@ -7,19 +7,21 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 import countries from '../../Components/countries.json';
 
+
 const form = useForm({
     name: '',
     email: '',
+    selectedCountry: '',
     country: '',
     phone: '',
-    phonePrefix: '',
     terms: false,
 });
 
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+        onFinish: () => form.reset(),
     });
+    console.log(form);
 };
 </script>
 
@@ -58,12 +60,11 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <select id="country" v-model="selectedCountry" @change="updatePhonePrefix">
-                        <option v-for="country in countries" :key="country.code" :value="country">
-                            {{ country.name }}
+                <select id="country" v-model="form.selectedCountry">
+                        <option v-for="country in countries" :value="country">
+                            <span v-html="country.flag"></span> {{ country.name }}
                         </option>
                     </select>
-                    <!-- <img :src="selectedCountry.flag" :alt="selectedCountry.name" /> -->
 
                 <InputError class="mt-2" :message="form.errors.country" />
             </div>
@@ -71,14 +72,13 @@ const submit = () => {
             <div class="mt-4">
                 <InputLabel for="phone" value="Phone Number" />
                 <div class="flex">
+                <TextInput type="text" class="mt-1 block w-1/6" :value="form.selectedCountry.idd" disabled/>
                 <TextInput
                     id="phone"
                     type="text"
                     class="mt-1 block w-full"
                     v-model="form.phone"
                     required
-                    autocomplete="phone"
-                    :placeholder="phonePrefix"
                 />
                 </div>
 
