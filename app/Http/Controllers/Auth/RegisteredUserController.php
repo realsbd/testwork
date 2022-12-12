@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\EmailNotification;
 use Inertia\Inertia;
 
 class RegisteredUserController extends Controller
@@ -67,10 +68,16 @@ class RegisteredUserController extends Controller
             ['user_id' => $user->id, 'country' => $country]
         );
 
+        $data = ['user' => $user->email];
+
+        $user->notify(new EmailNotification($data));
+
         event(new Registered($user));
 
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
     }
+
+
 }
